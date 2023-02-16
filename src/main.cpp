@@ -20,7 +20,7 @@ int manathan_distance(const map<int, state> states, state s) {
 }
 
 int main() {
-    // A* algorithm for 3x3 'taquin' game
+    // algorythm for solving the 8-puzzle problem 'taquin'
 
     // 1. create "randomly" the first state
     map<int, jeton> jetons;
@@ -57,7 +57,7 @@ int main() {
     cout << s_goal;
     cout << s_goal.hash() << endl;
 
-    // 3. create a vector of all possible states (for heuristic calculation)
+    // 3. create a vector of all possible states from goal state
     set<state> states;
     state s_init_copy(s_init);
     states.insert(s_goal);
@@ -89,8 +89,8 @@ int main() {
     cout << "goal state:" << endl;
     cout << s_init_copy;
     // affiche(states);
-    cout << "goal state parent:" << endl;
-    cout << states;
+    // cout << "goal state parent:" << endl;
+    // cout << states;
 
     // for (int k = 0; k < states.size(); k++) {
     //     state s = states.find(k)->second;
