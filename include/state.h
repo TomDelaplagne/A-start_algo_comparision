@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
-#include <vector>
 #include <map>
 #include <cmath>
+#include <set>
+#include <list>
 #include "jeton.h"
 
 using namespace std;
@@ -10,35 +11,39 @@ using namespace std;
 class state {
 private:
     map<int, jeton> jetons;
-    int heuristic_value; // -1 means not calculated yet
     list<int> historic;
 public:
     //constructor with map of jetons only
+    state(void) {
+        this->jetons = map<int, jeton>();
+        this->historic = list<int>();
+    }
     state(map<int, jeton> jetons) {
         this->jetons = jetons;
-        this->heuristic_value = -1;
         this->historic = list<int>();
     };
     // constructor with map and historic
     state(map<int, jeton> jetons, list<int> historic) {
         this->jetons = jetons;
         this->historic = historic;
-        this->heuristic_value = -1;
-    };
-    // constructor with map and heuristic value
-    state(map<int, jeton> jetons, int heuristic_value) {
-        this->jetons = jetons;
-        this->heuristic_value = heuristic_value;
-        this->historic = list<int>();
     };
     // constructor for recopie
     state(const state& s) {
         this->jetons = s.jetons;
-        this->heuristic_value = s.get_heuristic_value();
         this->historic = s.historic;
     };
-    int get_heuristic_value() const {return heuristic_value;};
-    void set_heuristic_value(int value) {heuristic_value = value;};
+    int get_heuristic() const {
+        for (int k = 0; k < 9; k++) {
+            if (this->jetons.find(k)->second.get_value() == 0) {
+                // get the coords of the empty jeton
+                pair<int, int> coords = this->jetons.find(k)->second.get_coods();
+                int x = coords.first;
+                int y = coords.second;
+                return abs(x - 2) + abs(y - 2);
+            }
+        }
+        throw "No empty jeton found";
+    }
     jeton operator[](int i) const {
         return this->jetons.find(i)->second;
     }
@@ -82,15 +87,16 @@ public:
         return this->historic;
     }
     bool operator==(const state& s2) const{
-        for (int i = 0; i < 9; i++) {
-            if (this->jetons.find(i)->second != s2.jetons.find(i)->second) {
-                return false;
-            }
-        }
-        return true;
+        return this->hash() == s2.hash();
+    }
+    bool operator!=(const state& s2) const {
+        return !(*this == s2);
     }
     bool operator<(const state& s2) const {
         return this->hash() < s2.hash();
+    }
+    int get_f_value() const {
+        return this->get_heuristic() + this->historic.size();
     }
     int hash() const {
         int hash = 0;
@@ -109,16 +115,12 @@ ostream& operator<< (ostream& stream, const state& s){
         }
         stream << endl;
     }
-    if (s.get_heuristic_value() != -1)
-        cout << "Heuristic value: " << s.get_heuristic_value() << endl;
-    else
-        cout << "Heuristic value not calculated yet" << endl;
     return stream;
 }
 
-ostream& operator<< (ostream& stream, list<pair<int, int>> l) {
-    for (list<pair<int, int>>::iterator it = l.begin(); it != l.end(); it++) {
-        stream << it->first << ", " << it->second << endl;
+ostream& operator<< (ostream& stream, list<int> l) {
+    for (list<int>::iterator it = l.begin(); it != l.end(); it++) {
+        stream << *it << endl;
     }
     return stream;
 }
