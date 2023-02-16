@@ -34,12 +34,15 @@ public:
     };
     int get_heuristic() const {
         for (int k = 0; k < 9; k++) {
+            if (this->jetons.find(k)->second.get_value() > 9 || this->jetons.find(k)->second.get_value() < 0) {
+                cout << "Error: jeton value is greater than 9" << endl;
+            }
             if (this->jetons.find(k)->second.get_value() == 0) {
                 // get the coords of the empty jeton
                 pair<int, int> coords = this->jetons.find(k)->second.get_coods();
                 int x = coords.first;
                 int y = coords.second;
-                return abs(x - 2) + abs(y - 2);
+                return abs(x) + abs(y);
             }
         }
         throw "No empty jeton found";

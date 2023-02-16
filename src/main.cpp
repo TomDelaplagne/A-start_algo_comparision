@@ -111,8 +111,6 @@ int main() {
                     // see if the node has allready been expanded
                     if (expanded.find(next_state.hash()) == expanded.end()) {
                         not_expanded_yet.insert(next_state);
-                    } else {
-                        // cout << "node allready expanded" << endl;
                     }
                 } catch (const char* msg) {
                     // cout << msg << endl;
