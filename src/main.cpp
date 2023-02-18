@@ -26,12 +26,29 @@ int main() {
     map<int, jeton> jetons;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            int value = j*3 + i;
-            int coords = j + i*3;
-            jeton s(i, j, value);
-            jetons.insert(pair<int, jeton>(coords, s));
+            int coords = j + 3*i, value = coords + 2;
+            if (value == 9) {
+                jeton s(i, j, 1);
+                jetons.insert(pair<int, jeton>(coords, s));
+            }
+            if (value < 9) {
+                jeton s(i, j, value);
+                jetons.insert(pair<int, jeton>(coords, s));
+            } else {
+                jeton s(i, j, 0);
+                jetons.insert(pair<int, jeton>(coords, s));
+            }
         }
     }
+
+    // for (int i = 0; i < 3; i++) {
+    //     for (int j = 0; j < 3; j++) {
+    //         int coords = j + 3*i, value = j*3 + i;
+    //         jeton s(i, j, value);
+    //         jetons.insert(pair<int, jeton>(coords, s));
+    //     }
+    // }
+
     state s_init(jetons);
     cout << "initial state:" << endl;
     cout << s_init;
@@ -41,14 +58,9 @@ int main() {
     map<int, jeton> jetons_goal;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            int coords = j + 3*i, value = coords + 1;
-            if (value < 9) {
-                jeton s(i, j, value);
-                jetons_goal.insert(pair<int, jeton>(coords, s));
-            } else {
-                jeton s(i, j, 0);
-                jetons_goal.insert(pair<int, jeton>(coords, s));
-            }
+            int coords = j + 3*i, value = coords;
+            jeton s(i, j, value);
+            jetons_goal.insert(pair<int, jeton>(coords, s));
         }
     }
 
@@ -100,6 +112,13 @@ int main() {
     // 5. expand the first state
     state current = state(s_init);
     while (current != s_goal) {
+        // cout << not_expanded_yet << endl;
+        // cout << "current state:" << endl;
+        // cout << current;
+        // if (expanded.size() > 2) {
+        //     cout << "stop" << endl;
+        //     break;
+        // }
         // expand current node
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {

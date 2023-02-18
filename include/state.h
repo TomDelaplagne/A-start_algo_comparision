@@ -33,19 +33,20 @@ public:
         this->historic = s.historic;
     };
     int get_heuristic() const {
+        int sum = 0;
         for (int k = 0; k < 9; k++) {
-            if (this->jetons.find(k)->second.get_value() > 9 || this->jetons.find(k)->second.get_value() < 0) {
-                cout << "Error: jeton value is greater than 9" << endl;
-            }
-            if (this->jetons.find(k)->second.get_value() == 0) {
-                // get the coords of the empty jeton
-                pair<int, int> coords = this->jetons.find(k)->second.get_coods();
-                int x = coords.first;
-                int y = coords.second;
-                return abs(x) + abs(y);
-            }
+            // get the coords of the jeton
+            pair<int, int> coords = this->jetons.find(k)->second.get_coods();
+            int x = coords.first;
+            int y = coords.second;
+            // get the coords goal of the jeton
+            int value = this->jetons.find(k)->second.get_value();
+            int x_goal = value % 3;
+            int y_goal = value / 3;
+            // calculate the distance
+            sum += abs(x - x_goal) + abs(y - y_goal);
         }
-        throw "No empty jeton found";
+        return sum;
     }
     jeton operator[](int i) const {
         return this->jetons.find(i)->second;
@@ -70,11 +71,12 @@ public:
                 if ((x + i) > 2 || (x + i) < 0 || (y + j) > 2 || (y + j) < 0) {
                     throw "You can't moove out of the map";
                 }
+                int new_coords = (x + i)*3 + (y + j);
                 // switch the jetons
-                jeton tmp = new_jetons.find(k + j*3 + i)->second;
+                jeton tmp = new_jetons.find(new_coords)->second;
                 tmp.set_coords(x, y);
-                new_jetons.find(k + i + j*3)->second = new_jetons.find(k)->second;
-                new_jetons.find(k + i + j*3)->second.set_coords(x + i, y + j);
+                new_jetons.find(new_coords)->second = new_jetons.find(k)->second;
+                new_jetons.find(new_coords)->second.set_coords(x + i, y + j);
                 new_jetons.find(k)->second = tmp;
 
                 state next_state(new_jetons, this->historic);
