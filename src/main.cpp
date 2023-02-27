@@ -11,6 +11,7 @@
 using namespace std;
  
 
+
 int main() {
     // algorythm for solving the 8-puzzle problem 'taquin' with A* search
 
@@ -54,7 +55,7 @@ int main() {
     state s_goal(jetons_goal);
     cout << "goal state:" << endl;
     cout << s_goal;
-    cout << s_goal.get_heuristic() << endl;
+    cout << s_goal.hash() << endl;
 
     // set<state> states;
     // state s_init_copy(s_init);
@@ -94,21 +95,23 @@ int main() {
     set<int> expanded;
 
     // 4. create the list of states not expanded yet
-    set<state> not_expanded_yet;
+    multiset<state> not_expanded_yet;
 
     // 5. expand the first state
-    state current = state(s_init);
+    state current(s_init);
+    state next_state;
+
     while (current != s_goal) {
         // expand current node
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 // find the next state
-                state next_state;
                 try {
                     next_state = current.get_next_state(i, j);
 
                     // see if the node has allready been expanded
                     if (expanded.find(next_state.hash()) == expanded.end()) {
+                        next_state.set_f_value();
                         not_expanded_yet.insert(next_state);
                     }
                 } catch (const char* msg) {
@@ -119,30 +122,25 @@ int main() {
         // after expanding the node, add it to the list of expanded nodes
         expanded.insert(current.hash());
 
-        // remove the current node from the list of nodes to expand
-        not_expanded_yet.erase(current);
+        // cout << "current f value: " << current.set_f_value() << endl;
 
         // find the next node to expand it's the one with the lowest f value
-        int min = 1000000;
-        for (set<state>::iterator it = not_expanded_yet.begin(); it != not_expanded_yet.end(); it++) {
-            int distance = it->get_f_value();
-            if (distance < min) {
-                min = distance;
-                current = *it;
-            }
-        }
+        current = *(not_expanded_yet.begin());
+        not_expanded_yet.erase(not_expanded_yet.begin());
 
         if (!not_expanded_yet.size()) {
             throw "no solution found";
         }
     }
+    current.get_historic().push_back(current.hash());
 
+    // 6. print the result
     cout << "goal state found" << endl;
     cout << current;
     cout << "number of states explored: " << expanded.size() << endl;
-    cout << "number of moves to reach the goal state: " << current.get_historic().size() << endl;
+    cout << "number of moves to reach the goal state: " << current.get_historic().size() - 1 << endl;
     cout << "historic of the goal state:" << endl;
     cout << current.get_historic();
-
+    cout << current;
     return 0;
 }

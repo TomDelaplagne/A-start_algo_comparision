@@ -12,6 +12,8 @@ include_directories(${CMAKE_BINARY_DIR}/../include)
 # Impose certaines options de compilation
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -Wextra -Wpedantic")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
 # Génère la liste des fichiers .cpp devant être compilés
 file(
    GLOB_RECURSE

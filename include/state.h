@@ -12,25 +12,12 @@ class state {
 private:
     map<int, jeton> jetons;
     list<int> historic;
+    int f_value;
 public:
-    state(void) {
-        this->jetons = map<int, jeton>();
-        this->historic = list<int>();
-    }
-    state(map<int, jeton> jetons) {
-        this->jetons = jetons;
-        this->historic = list<int>();
-    };
-    // constructor with map and historic
-    state(map<int, jeton> jetons, list<int> historic) {
-        this->jetons = jetons;
-        this->historic = historic;
-    };
-    // constructor for recopie
-    state(const state& s) {
-        this->jetons = s.jetons;
-        this->historic = s.historic;
-    };
+    state(void) {};
+    state(const map<int, jeton>& j) : jetons(j) {};
+    state(const map<int, jeton>& j, const list<int>& h) : jetons(j), historic(h) {};
+
     int get_heuristic() const {
         int sum = 0;
         for (int k = 0; k < 9; k++) {
@@ -100,10 +87,11 @@ public:
         return !(*this == s2);
     }
     inline bool operator<(const state& s2) const {
-        return this->hash() < s2.hash();
+        return this->f_value < s2.f_value;
     }
-    inline int get_f_value() const {
-        return this->get_heuristic() + this->historic.size();
+    inline int set_f_value() {
+        this->f_value = this->get_heuristic() + this->historic.size();
+        return this->f_value;
     }
     int hash() const {
         int hash = 0;
@@ -124,9 +112,23 @@ ostream& operator<< (ostream& stream, const state& s){
     return stream;
 }
 
+state hash_to_taquin(int hashed_value) {
+    map<int, jeton> jetons;
+    for (int i = 0; i < 9; i++) {
+        int value = hashed_value % 10;
+        int l = i % 3, k = i / 3;
+        jeton s(l, k, value);
+        jetons.insert(pair<int, jeton>(i, s));
+        hashed_value /= 10;
+    }
+    state s(jetons);
+    return s;
+}
+
 ostream& operator<< (ostream& stream, list<int> l) {
     for (list<int>::iterator it = l.begin(); it != l.end(); it++) {
-        stream << *it << endl;
+        state s = hash_to_taquin(*it);
+        stream << s << endl;
     }
     return stream;
 }
