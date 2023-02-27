@@ -12,7 +12,7 @@ using namespace std;
  
 
 int main() {
-    // algorythm for solving the 8-puzzle problem 'taquin'
+    // algorythm for solving the 8-puzzle problem 'taquin' with A* search
 
     // 1. create "randomly" the first state
     map<int, jeton> jetons;
@@ -40,7 +40,6 @@ int main() {
     state s_init(jetons);
     cout << "initial state:" << endl;
     cout << s_init;
-    // cout << s_init.hash() << endl;
 
     // 2. create the goal state
     map<int, jeton> jetons_goal;
