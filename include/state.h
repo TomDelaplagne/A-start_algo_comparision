@@ -13,7 +13,6 @@ private:
     map<int, jeton> jetons;
     list<int> historic;
 public:
-    //constructor with map of jetons only
     state(void) {
         this->jetons = map<int, jeton>();
         this->historic = list<int>();
@@ -39,19 +38,22 @@ public:
             pair<int, int> coords = this->jetons.find(k)->second.get_coods();
             int x = coords.first;
             int y = coords.second;
+
             // get the coords goal of the jeton
             int value = this->jetons.find(k)->second.get_value();
-            int x_goal = value % 3;
-            int y_goal = value / 3;
+            int y_goal = value % 3;
+            int x_goal = value / 3;
+
             // calculate the distance
             sum += abs(x - x_goal) + abs(y - y_goal);
         }
+
         return sum;
     }
-    jeton operator[](int i) const {
+    inline jeton operator[](int i) const {
         return this->jetons.find(i)->second;
     }
-    map<int, jeton> get_jetons() const {
+    inline map<int, jeton> get_jetons() const {
         return this->jetons;
     }
     state get_next_state(int i, int j) const {
@@ -88,19 +90,19 @@ public:
         }
         throw "No empty jeton found";
     }
-    list<int> get_historic() const {
+    inline list<int> get_historic() const {
         return this->historic;
     }
-    bool operator==(const state& s2) const{
+    inline bool operator==(const state& s2) const{
         return this->hash() == s2.hash();
     }
-    bool operator!=(const state& s2) const {
+    inline bool operator!=(const state& s2) const {
         return !(*this == s2);
     }
-    bool operator<(const state& s2) const {
+    inline bool operator<(const state& s2) const {
         return this->hash() < s2.hash();
     }
-    int get_f_value() const {
+    inline int get_f_value() const {
         return this->get_heuristic() + this->historic.size();
     }
     int hash() const {
@@ -116,7 +118,6 @@ ostream& operator<< (ostream& stream, const state& s){
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             stream << s[j + i*3] << " ";
-            // stream << "(" << i << ", "<<j<<")" << " ";
         }
         stream << endl;
     }
@@ -125,13 +126,6 @@ ostream& operator<< (ostream& stream, const state& s){
 
 ostream& operator<< (ostream& stream, list<int> l) {
     for (list<int>::iterator it = l.begin(); it != l.end(); it++) {
-        stream << *it << endl;
-    }
-    return stream;
-}
-
-ostream& operator<< (ostream& stream, set<state> states) {
-    for (set<state>::iterator it = states.begin(); it != states.end(); it++) {
         stream << *it << endl;
     }
     return stream;

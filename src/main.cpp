@@ -11,14 +11,6 @@
 using namespace std;
  
 
-int manathan_distance(const map<int, state> states, state s) {
-    int distance = 0;
-    // for (map<int, state>::const_iterator it = states.begin(); it != states.end(); it++) {
-    //     distance += it->second.manathan_distance(s);
-    // }
-    return distance;
-}
-
 int main() {
     // algorythm for solving the 8-puzzle problem 'taquin'
 
@@ -26,11 +18,7 @@ int main() {
     map<int, jeton> jetons;
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
-            int coords = j + 3*i, value = coords + 2;
-            if (value == 9) {
-                jeton s(i, j, 1);
-                jetons.insert(pair<int, jeton>(coords, s));
-            }
+            int coords = j + 3*i, value = coords + 1;
             if (value < 9) {
                 jeton s(i, j, value);
                 jetons.insert(pair<int, jeton>(coords, s));
@@ -52,7 +40,7 @@ int main() {
     state s_init(jetons);
     cout << "initial state:" << endl;
     cout << s_init;
-    cout << s_init.hash() << endl;
+    // cout << s_init.hash() << endl;
 
     // 2. create the goal state
     map<int, jeton> jetons_goal;
@@ -67,7 +55,7 @@ int main() {
     state s_goal(jetons_goal);
     cout << "goal state:" << endl;
     cout << s_goal;
-    cout << s_goal.hash() << endl;
+    cout << s_goal.get_heuristic() << endl;
 
     // set<state> states;
     // state s_init_copy(s_init);
@@ -112,13 +100,6 @@ int main() {
     // 5. expand the first state
     state current = state(s_init);
     while (current != s_goal) {
-        // cout << not_expanded_yet << endl;
-        // cout << "current state:" << endl;
-        // cout << current;
-        // if (expanded.size() > 2) {
-        //     cout << "stop" << endl;
-        //     break;
-        // }
         // expand current node
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
@@ -151,24 +132,16 @@ int main() {
                 current = *it;
             }
         }
-        // cout << "node to expand:" << endl;
-        // cout << current;
-        // cout << "f value: " << min << endl;
-        // cout << "h value: " << current.get_heuristic() << endl;
 
-        if (!(expanded.size()%1000)) {
-            cout << "number of states explored: " << expanded.size() << endl;
-            cout << "f value: " << min << endl;
-        }
         if (!not_expanded_yet.size()) {
-            cout << "no solution found" << endl;
-            return 0;
+            throw "no solution found";
         }
     }
 
     cout << "goal state found" << endl;
     cout << current;
     cout << "number of states explored: " << expanded.size() << endl;
+    cout << "number of moves to reach the goal state: " << current.get_historic().size() << endl;
     cout << "historic of the goal state:" << endl;
     cout << current.get_historic();
 

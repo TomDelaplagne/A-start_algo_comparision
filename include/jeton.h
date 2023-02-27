@@ -22,14 +22,14 @@ public:
         pair<int, int> coords(this->x, this->y);
         return coords;
     }
-    int get_value() const {return this->value;}
-    bool operator<(const jeton& j2) const{
+    inline int get_value() const {return this->value;}
+    inline bool operator<(const jeton& j2) const{
         return this->value < j2.get_value();
     }
-    bool operator==(const jeton& j2) const{
+    inline bool operator==(const jeton& j2) const{
         return this->value == j2.get_value();
     }
-    bool operator!=(const jeton& j2) const{
+    inline bool operator!=(const jeton& j2) const{
         return this->value != j2.get_value();
     }
     ~jeton() {}
